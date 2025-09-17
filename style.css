@@ -67,6 +67,7 @@ h2 {
     z-index: 100;
     backdrop-filter: blur(10px);
     background-color: rgba(255, 255, 255, 0.8);
+    transition: padding 0.3s ease;
 }
 
 .main-nav {
@@ -83,8 +84,9 @@ h2 {
 }
 
 .logo-img {
-    height: 200px; 
-    width: auto; 
+    height: 125px; 
+    width: auto;
+    transition: width 0.3s ease;
 }
 
 .nav-links {
@@ -315,4 +317,15 @@ h2 {
     .main-nav {
         justify-content: center; /* Center the logo when nav links are hidden */
     }
+
+    .main-header.scrolled {
+        padding: 0.25rem 0; 
+        box-shadow: var(--shadow-sm);
+    }
+
+    .main-header.scrolled .logo-img {
+        height: 50px; 
+        width: auto;
+    }
+
 }
