@@ -86,7 +86,7 @@ h2 {
 .logo-img {
     height: 125px; 
     width: auto;
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .nav-links {
@@ -319,7 +319,7 @@ h2 {
     }
 
     .main-header.scrolled {
-        padding: 0.25rem 0; 
+        padding: 1rem 0; 
         box-shadow: var(--shadow-sm);
     }
 
