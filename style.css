@@ -83,13 +83,8 @@ h2 {
 }
 
 .logo-img {
-    height: 45px;
-    margin-right: 0.75rem;
-}
-
-.logo-text {
-    font-size: 1.6rem;
-    font-weight: 700;
+    height: 50px; /* Increased height slightly for better visibility */
+    width: auto;  /* Ensures the width scales proportionally */
 }
 
 .nav-links {
