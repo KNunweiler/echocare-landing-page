@@ -1,13 +1,16 @@
 /* style.css */
 :root {
   --primary-blue: #2d6a8c;
+  --primary-green: #6bc3a3; /* Sampled from logo */
   --dark-text: #003366;
   --light-bg: #f4f7f6;
   --white: #ffffff;
   --border-color: #e0e0e0;
   --text-primary: #333;
-  --text-secondary: #666;
+  --text-secondary: #555;
   --font-family: 'Roboto', sans-serif;
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* --- Global Reset & Base Styles --- */
@@ -24,14 +27,34 @@ html {
 body {
     font-family: var(--font-family);
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.7;
     background-color: var(--white);
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 2rem;
+    padding: 0 1.5rem;
+}
+
+h1, h2, h3, h4 {
+    color: var(--dark-text);
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.section-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    max-width: 700px;
+    margin: 0 auto 3rem auto;
+    text-align: center;
 }
 
 /* --- Header & Navigation --- */
@@ -42,6 +65,8 @@ body {
     position: sticky;
     top: 0;
     z-index: 100;
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0.8);
 }
 
 .main-nav {
@@ -58,19 +83,19 @@ body {
 }
 
 .logo-img {
-    height: 40px;
-    margin-right: 0.5rem;
+    height: 45px;
+    margin-right: 0.75rem;
 }
 
 .logo-text {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: 700;
 }
 
 .nav-links {
     list-style: none;
     display: flex;
-    gap: 2rem;
+    gap: 2.5rem;
 }
 
 .nav-links a {
@@ -78,10 +103,13 @@ body {
     color: var(--text-secondary);
     font-weight: 500;
     transition: color 0.2s ease;
+    padding-bottom: 0.25rem;
+    border-bottom: 2px solid transparent;
 }
 
 .nav-links a:hover {
     color: var(--primary-blue);
+    border-bottom-color: var(--primary-blue);
 }
 
 /* --- Buttons --- */
@@ -91,6 +119,7 @@ body {
     text-decoration: none;
     font-weight: 500;
     transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .btn-primary {
@@ -101,7 +130,18 @@ body {
 .btn-primary:hover {
     background-color: var(--dark-text);
     transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-secondary:hover {
+    background-color: var(--primary-blue);
+    color: var(--white);
 }
 
 .btn-large {
@@ -111,7 +151,7 @@ body {
 
 /* --- Hero Section --- */
 .hero-section {
-    background-color: var(--light-bg);
+    background: linear-gradient(170deg, var(--light-bg), var(--white));
     padding: 6rem 0;
     text-align: center;
 }
@@ -119,85 +159,115 @@ body {
 .hero-content h1 {
     font-size: 3.5rem;
     color: var(--dark-text);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .hero-content .subtitle {
-    font-size: 1.25rem;
+    font-size: 1.3rem;
     color: var(--text-secondary);
     max-width: 700px;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 2.5rem auto;
 }
 
-/* --- Features Section --- */
-.features-section {
+/* --- For Caregivers Section --- */
+.for-caregivers-section {
     padding: 5rem 0;
-    text-align: center;
+    background-color: var(--white);
 }
 
-.features-section h2 {
-    font-size: 2.5rem;
-    color: var(--dark-text);
-    margin-bottom: 3rem;
-}
-
-.features-grid {
+.stats-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
+    text-align: center;
+    margin-top: 4rem;
 }
 
-.feature-card {
+.stat-item .stat-number {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    line-height: 1;
+}
+
+.stat-item .stat-label {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+}
+
+/* --- How It Works Section --- */
+.how-it-works-section {
+    padding: 5rem 0;
+    background-color: var(--light-bg);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 1rem;
+}
+
+.step-card {
     background-color: var(--white);
-    padding: 2rem;
+    padding: 2.5rem 2rem;
     border: 1px solid var(--border-color);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    position: relative;
+    border-top: 4px solid var(--primary-blue);
 }
 
-.feature-icon {
-    height: 50px;
-    margin-bottom: 1rem;
+.step-card .step-number {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--primary-blue);
+    color: var(--white);
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border: 3px solid var(--light-bg);
 }
 
-.feature-card h3 {
+.step-card h3 {
     font-size: 1.5rem;
     color: var(--dark-text);
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
 }
 
 /* --- Ethics Section --- */
 .ethics-section {
-    background-color: var(--light-bg);
     padding: 5rem 0;
-    text-align: center;
-}
-
-.ethics-section h2 {
-    font-size: 2.5rem;
-    color: var(--dark-text);
-    margin-bottom: 1rem;
 }
 
 .ethics-section .section-subtitle {
-    max-width: 600px;
-    margin: 0 auto 3rem auto;
-    color: var(--text-secondary);
+    font-style: italic;
+    font-weight: 500;
 }
 
 .ethics-points {
-    display: flex;
-    justify-content: space-around;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     text-align: left;
 }
 
 .ethic-item {
     background-color: var(--white);
-    padding: 1.5rem;
+    padding: 2rem;
     border-radius: 8px;
-    border-left: 4px solid var(--primary-blue);
-    flex: 1;
+    border-left: 4px solid var(--primary-green);
+    box-shadow: var(--shadow-sm);
 }
 
 .ethic-item h4 {
@@ -211,10 +281,42 @@ body {
     background-color: var(--dark-text);
     color: var(--white);
     text-align: center;
-    padding: 2rem 0;
+    padding: 3rem 0;
 }
 
 .main-footer a {
     color: var(--white);
     text-decoration: underline;
+}
+.main-footer p {
+    margin-bottom: 0.5rem;
+}
+
+
+/* --- Responsive Design --- */
+@media (max-width: 992px) {
+    .ethics-points, .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    h2 {
+        font-size: 2rem;
+    }
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    
+    .nav-links, .main-nav .btn-secondary {
+        display: none; /* Simple hiding for mobile. A JS solution would create a hamburger menu. */
+    }
+
+    .steps-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .main-nav {
+        justify-content: center; /* Center the logo when nav links are hidden */
+    }
 }
