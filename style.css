@@ -76,6 +76,10 @@ h2 {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1.5rem; 
 }
 
 .logo-link {
@@ -104,7 +108,7 @@ h2 {
     transition: color 0.2s ease;
     padding-bottom: 0.25rem;
     border-bottom: 2px solid transparent;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .nav-links a:hover {
