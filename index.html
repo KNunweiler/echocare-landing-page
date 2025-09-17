@@ -114,20 +114,21 @@
 
     <script>
     const header = document.querySelector('.main-header');
-    let isScrolled = false; // State to prevent unnecessary DOM changes
+    let lastScrollY = window.scrollY;
 
     window.addEventListener('scroll', () => {
-        // Use different thresholds for adding/removing the class to prevent flicker
-        const scrollDownThreshold = 50;
-        const scrollUpThreshold = 25;
+        const currentScrollY = window.scrollY;
 
-        if (window.scrollY > scrollDownThreshold && !isScrolled) {
-            header.classList.add('scrolled');
-            isScrolled = true;
-        } else if (window.scrollY < scrollUpThreshold && isScrolled) {
-            header.classList.remove('scrolled');
-            isScrolled = false;
+        if (currentScrollY > lastScrollY) {
+            // Scrolling Down
+            header.classList.add('hidden');
+        } else {
+            // Scrolling Up
+            header.classList.remove('hidden');
         }
+
+        // Update the last scroll position for the next event
+        lastScrollY = currentScrollY;
     });
     </script>
 
