@@ -1,20 +1,29 @@
 /* style.css */
 :root {
-  --primary-blue: #2d6a8c;
-  --primary-green: #6bc3a3; /* Sampled from logo */
-  --dark-text: #003366;
-  --light-bg: #f4f7f6;
-  --white: #ffffff;
-  --border-color: #e0e0e0;
-  --text-primary: #333;
-  --text-secondary: #555;
-  --font-family: 'Roboto', sans-serif;
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --primary-blue: #8a97c3;
+    /* Brand Primary (Periwinkle Blue) */
+    --primary-green: #ec9579;
+    /* Brand Accent (Warm Coral) */
+    --brand-neutral: #a098ae;
+    /* Brand Neutral (Muted Lavender) */
+    --dark-text: #2c2b30;
+    /* Softer dark text */
+    --light-bg: #fbfafc;
+    /* Warmer, softer light background */
+    --white: #ffffff;
+    --border-color: #e8e6ea;
+    --text-primary: #3a383d;
+    --text-secondary: #636168;
+    --font-sans: 'Inter', sans-serif;
+    --font-serif: 'Lora', serif;
+    --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* --- Global Reset & Base Styles --- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -25,7 +34,7 @@ html {
 }
 
 body {
-    font-family: var(--font-family);
+    font-family: var(--font-sans);
     color: var(--text-primary);
     line-height: 1.7;
     background-color: var(--white);
@@ -38,7 +47,11 @@ body {
     padding: 0 1.5rem;
 }
 
-h1, h2, h3, h4 {
+h1,
+h2,
+h3,
+h4 {
+    font-family: var(--font-serif);
     color: var(--dark-text);
     line-height: 1.2;
 }
@@ -79,7 +92,7 @@ h2 {
     width: 100%;
     max-width: 1000px;
     margin: 0 auto;
-    padding: 0 1.5rem; 
+    padding: 0 1.5rem;
 }
 
 .logo-link {
@@ -90,9 +103,44 @@ h2 {
 }
 
 .logo-img {
-    height: 125px; 
+    height: 60px;
     width: auto;
     transition: all 0.3s ease;
+}
+
+/* --- Mobile Menu Toggle --- */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 24px;
+    width: 30px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    z-index: 101;
+    /* Above mobile menu */
+}
+
+.menu-toggle .bar {
+    height: 3px;
+    width: 100%;
+    background-color: var(--dark-text);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger animation classes */
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(10.5px) rotate(45deg);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-10.5px) rotate(-45deg);
 }
 
 .nav-links {
@@ -114,6 +162,41 @@ h2 {
 .nav-links a:hover {
     color: var(--primary-blue);
     border-bottom-color: var(--primary-blue);
+}
+
+/* --- Mobile Menu Toggle --- */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 24px;
+    width: 30px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    z-index: 101;
+    /* Above mobile menu */
+}
+
+.menu-toggle .bar {
+    height: 3px;
+    width: 100%;
+    background-color: var(--dark-text);
+    border-radius: 3px;
+    transition: all 0.3s ease;
+}
+
+/* Hamburger animation classes */
+.menu-toggle.active .bar:nth-child(1) {
+    transform: translateY(10.5px) rotate(45deg);
+}
+
+.menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+}
+
+.menu-toggle.active .bar:nth-child(3) {
+    transform: translateY(-10.5px) rotate(-45deg);
 }
 
 /* --- Buttons --- */
@@ -173,6 +256,57 @@ h2 {
     margin: 0 auto 2.5rem auto;
 }
 
+/* --- Audio Demo Section --- */
+.demo-section {
+    padding: 0 0 5rem 0;
+    /* Tucked slightly into hero */
+    margin-top: -3rem;
+    position: relative;
+    z-index: 10;
+}
+
+.demo-card {
+    background-color: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    padding: 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+    border-top: 5px solid var(--primary-green);
+}
+
+.demo-text h2 {
+    text-align: left;
+    margin-bottom: 1rem;
+    font-size: 2.2rem;
+}
+
+.audio-track {
+    margin-bottom: 1.5rem;
+}
+
+.track-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.track-label.accent-label {
+    color: var(--primary-blue);
+}
+
+.custom-audio {
+    width: 100%;
+    height: 40px;
+    outline: none;
+}
+
 /* --- For Caregivers Section --- */
 .for-caregivers-section {
     padding: 5rem 0;
@@ -181,10 +315,13 @@ h2 {
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
     text-align: center;
     margin-top: 4rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .stat-item .stat-number {
@@ -195,9 +332,26 @@ h2 {
 }
 
 .stat-item .stat-label {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: var(--text-secondary);
     margin-top: 0.5rem;
+}
+
+.emotional-banner {
+    margin-top: 4rem;
+    padding: 2.5rem;
+    background-color: var(--light-bg);
+    border-radius: 12px;
+    text-align: center;
+    font-size: 1.5rem;
+    color: var(--dark-text);
+    border-left: 6px solid var(--primary-green);
+    box-shadow: var(--shadow-sm);
+}
+
+.emotional-banner strong {
+    color: var(--primary-blue);
+    font-size: 2rem;
 }
 
 /* --- How It Works Section --- */
@@ -249,6 +403,125 @@ h2 {
     margin-top: 1.5rem;
 }
 
+/* --- Request Trial Form Section --- */
+/* --- Modal Styles --- */
+.request-trial-section {
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(44, 43, 48, 0.6);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    transform: translateY(20px) scale(0.95);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.close-modal {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-modal:hover {
+    color: var(--primary-green);
+}
+
+.modal-header h3 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-header p {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.trial-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+}
+
+.form-group label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--dark-text);
+}
+
+.form-group input {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(138, 151, 195, 0.2);
+}
+
+.btn-block {
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.form-disclaimer {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+}
+
 /* --- Ethics Section --- */
 .ethics-section {
     padding: 5rem 0;
@@ -292,6 +565,7 @@ h2 {
     color: var(--white);
     text-decoration: underline;
 }
+
 .main-footer p {
     margin-bottom: 0.5rem;
 }
@@ -299,7 +573,9 @@ h2 {
 
 /* --- Responsive Design --- */
 @media (max-width: 992px) {
-    .ethics-points, .stats-grid {
+
+    .ethics-points,
+    .stats-grid {
         grid-template-columns: 1fr;
     }
 }
@@ -308,20 +584,59 @@ h2 {
     h2 {
         font-size: 2rem;
     }
+
     .hero-content h1 {
         font-size: 2.5rem;
     }
-    
-    .nav-links, .main-nav .btn-secondary {
-        display: none; /* Simple hiding for mobile. A JS solution would create a hamburger menu. */
+
+    .desktop-login {
+        display: none;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .nav-links {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        max-width: 300px;
+        height: 100vh;
+        background-color: var(--white);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        transition: right 0.4s ease;
+        box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-links li {
+        margin: 1.5rem 0;
     }
 
     .steps-grid {
         grid-template-columns: 1fr;
     }
 
-    .main-nav {
-        justify-content: center; /* Center the logo when nav links are hidden */
+    .demo-card {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+        gap: 2rem;
+    }
+
+    .demo-text h2 {
+        text-align: center;
+    }
+
+    .modal-content {
+        padding: 2rem;
     }
 
     .main-header.hidden {
