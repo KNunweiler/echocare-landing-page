@@ -219,21 +219,33 @@
                 <p>We'll connect with you shortly to begin setting up your custom voice profile.</p>
             </div>
             <!-- Replace 'YOUR_FORMSPREE_ENDPOINT' with your actual endpoint later -->
-            <form action="https://formspree.io/f/mqedoevr" method="POST" class="trial-form">
-                <div class="form-group">
-                    <label for="name">Your Name</label>
-                    <input type="text" id="name" name="name" required placeholder="Jane Doe">
+            <form id="trial-request-form" action="https://formspree.io/f/mqedoevr" method="POST" class="trial-form">
+                <div id="trial-form-inputs">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" name="name" required placeholder="Jane Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required placeholder="jane@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number (Optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
+                    </div>
+                    <button type="submit" id="trial-submit-btn" class="btn btn-primary btn-large btn-block">Submit
+                        Request</button>
+                    <p class="form-disclaimer">We respect your privacy. No spam, ever.</p>
                 </div>
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" required placeholder="jane@example.com">
+                <div id="trial-form-status-container" style="display: none; text-align: center; padding: 2rem 0;">
+                    <svg style="width: 60px; height: 60px; color: var(--primary-green); margin-bottom: 1rem;"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <p id="trial-form-status" class="form-status-message"
+                        style="font-size: 1.2rem; font-weight: 500; color: var(--dark-text);"></p>
                 </div>
-                <div class="form-group">
-                    <label for="phone">Phone Number (Optional)</label>
-                    <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567">
-                </div>
-                <button type="submit" class="btn btn-primary btn-large btn-block">Submit Request</button>
-                <p class="form-disclaimer">We respect your privacy. No spam, ever.</p>
             </form>
         </div>
     </div>
@@ -268,6 +280,66 @@
                 closeModal();
             }
         });
+
+        // AJAX Formspree Submission
+        const trialForm = document.getElementById('trial-request-form');
+        const trialFormInputs = document.getElementById('trial-form-inputs');
+        const trialFormStatusContainer = document.getElementById('trial-form-status-container');
+        const trialFormStatus = document.getElementById('trial-form-status');
+        const trialFormBtn = document.getElementById('trial-submit-btn');
+
+        if (trialForm) {
+            trialForm.addEventListener('submit', async function (e) {
+                e.preventDefault();
+
+                const data = new FormData(trialForm);
+                trialFormBtn.innerHTML = 'Sending...';
+                trialFormBtn.disabled = true;
+                trialFormStatusContainer.style.display = 'none';
+
+                fetch(trialForm.action, {
+                    method: trialForm.method,
+                    body: data,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                }).then(response => {
+                    if (response.ok) {
+                        trialFormInputs.style.display = 'none';
+                        trialFormStatus.innerHTML = "Thanks! We'll be in touch shortly.";
+                        trialFormStatusContainer.style.display = "block";
+                        trialForm.reset();
+
+                        setTimeout(() => {
+                            closeModal();
+                            setTimeout(() => {
+                                trialFormInputs.style.display = 'block';
+                                trialFormStatusContainer.style.display = 'none';
+                                trialFormBtn.innerHTML = 'Submit Request';
+                                trialFormBtn.disabled = false;
+                            }, 400);
+                        }, 3000);
+
+                    } else {
+                        response.json().then(data => {
+                            if (Object.hasOwn(data, 'errors')) {
+                                trialFormStatus.innerHTML = data["errors"].map(error => error["message"]).join(", ");
+                            } else {
+                                trialFormStatus.innerHTML = "Oops! There was a problem submitting your form.";
+                            }
+                            trialFormStatusContainer.style.display = "block";
+                            trialFormBtn.innerHTML = 'Submit Request';
+                            trialFormBtn.disabled = false;
+                        });
+                    }
+                }).catch(error => {
+                    trialFormStatus.innerHTML = "Oops! There was a problem submitting your form.";
+                    trialFormStatusContainer.style.display = "block";
+                    trialFormBtn.innerHTML = 'Submit Request';
+                    trialFormBtn.disabled = false;
+                });
+            });
+        }
 
         // Mobile Menu Toggle
         menuToggle.addEventListener('click', () => {
