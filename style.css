@@ -164,6 +164,10 @@ h2 {
     border-bottom-color: var(--primary-blue);
 }
 
+.mobile-login {
+    display: none;
+}
+
 /* --- Mobile Menu Toggle --- */
 .menu-toggle {
     display: none;
@@ -619,6 +623,11 @@ h2 {
 
     .nav-links li {
         margin: 1.5rem 0;
+    }
+
+    .mobile-login {
+        display: block;
+        margin-top: 1rem;
     }
 
     .steps-grid {
