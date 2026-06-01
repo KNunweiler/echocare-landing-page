@@ -168,39 +168,11 @@ h2 {
     display: none;
 }
 
-/* --- Mobile Menu Toggle --- */
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 24px;
-    width: 30px;
-    cursor: pointer;
-    background: transparent;
-    border: none;
-    z-index: 101;
-    /* Above mobile menu */
-}
-
-.menu-toggle .bar {
-    height: 3px;
-    width: 100%;
-    background-color: var(--dark-text);
-    border-radius: 3px;
-    transition: all 0.3s ease;
-}
-
-/* Hamburger animation classes */
-.menu-toggle.active .bar:nth-child(1) {
-    transform: translateY(10.5px) rotate(45deg);
-}
-
-.menu-toggle.active .bar:nth-child(2) {
-    opacity: 0;
-}
-
-.menu-toggle.active .bar:nth-child(3) {
-    transform: translateY(-10.5px) rotate(-45deg);
+/* Desktop nav auth buttons (Sign Up + Client Login) grouped at the right */
+.nav-cta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* --- Buttons --- */
