@@ -156,7 +156,7 @@ h2 {
     transition: color 0.2s ease;
     padding-bottom: 0.25rem;
     border-bottom: 2px solid transparent;
-    font-size: 1.25rem;
+    font-size: 0.95rem;
 }
 
 .nav-links a:hover {
@@ -548,17 +548,63 @@ h2 {
 .main-footer {
     background-color: var(--dark-text);
     color: var(--white);
-    text-align: center;
-    padding: 3rem 0;
+    padding: 3rem 0 2rem;
 }
 
-.main-footer a {
+.footer-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 2rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    margin-bottom: 1.5rem;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.footer-logo {
+    height: 48px;
+    width: auto;
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+.footer-tagline {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 0.88rem;
+    margin: 0;
+}
+
+.footer-links {
+    display: flex;
+    gap: 2rem;
+}
+
+.footer-links a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
     color: var(--white);
-    text-decoration: underline;
 }
 
-.main-footer p {
-    margin-bottom: 0.5rem;
+.footer-bottom {
+    text-align: center;
+}
+
+.footer-bottom p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
 }
 
 
@@ -637,5 +683,20 @@ h2 {
 
     .main-header.hidden {
         transform: translateY(-100%);
+    }
+
+    .footer-inner {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .footer-brand {
+        align-items: center;
+    }
+
+    .footer-links {
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem;
     }
 }
