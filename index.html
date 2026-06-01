@@ -239,6 +239,19 @@
             });
         });
 
+        // Graceful fallback if audio files are missing or fail to load
+        document.querySelectorAll('.custom-audio source').forEach(source => {
+            source.addEventListener('error', function () {
+                const audio = this.closest('audio');
+                const track = audio?.closest('.audio-track');
+                if (!track) return;
+                const msg = document.createElement('p');
+                msg.className = 'audio-unavailable';
+                msg.textContent = 'Audio sample coming soon.';
+                audio.replaceWith(msg);
+            });
+        });
+
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
 

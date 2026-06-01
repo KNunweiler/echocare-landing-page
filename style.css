@@ -212,6 +212,14 @@ h2 {
     padding: 1rem 2rem;
 }
 
+/* --- Audio demo fallback --- */
+.audio-unavailable {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-style: italic;
+    margin: 0.5rem 0;
+}
+
 /* --- CTA pricing hint --- */
 .cta-pricing-hint {
     margin-top: 0.75rem;
