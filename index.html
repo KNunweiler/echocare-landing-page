@@ -62,19 +62,10 @@
             <a href="#hero" class="logo-link">
                 <img src="assets/logo.jpg" alt="Voice Companion Logo" class="logo-img">
             </a>
-            <button class="menu-toggle" aria-label="Toggle Navigation">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </button>
             <ul class="nav-links">
                 <li><a href="#how-it-works">How It Works</a></li>
                 <li><a href="#ethics">Our Ethics</a></li>
                 <li><a href="#" class="contact-trigger">Contact</a></li>
-                <li class="mobile-login"><a href="https://portal.voicecompanion.com/register"
-                        class="btn btn-primary">Sign Up</a></li>
-                <li class="mobile-login"><a href="https://portal.voicecompanion.com" class="btn btn-secondary">Client
-                        Login</a></li>
             </ul>
             <div class="nav-cta">
                 <a href="https://portal.voicecompanion.com/register" class="btn btn-primary desktop-login">Sign Up</a>
@@ -97,10 +88,6 @@
                     <p class="subtitle" data-animate data-delay="220">Voice Companion provides a comforting,
                         AI-powered voice companion for individuals with dementia, giving caregivers the respite they
                         deserve and patients the reassurance they need.</p>
-                    <div class="hero-actions" data-animate data-delay="340">
-                        <a href="https://portal.voicecompanion.com/register" class="btn btn-cta btn-large">Sign Up &rarr;</a>
-                        <p class="cta-pricing-hint">Starting at $100/month &middot; Cancel anytime</p>
-                    </div>
                 </div>
 
                 <div class="hero-visual">
@@ -124,6 +111,11 @@
                     <a href="https://portal.voicecompanion.com/register" class="rings-cta">
                         Set up in minutes &rarr;
                     </a>
+                </div>
+
+                <div class="hero-actions" data-animate data-delay="340">
+                    <a href="https://portal.voicecompanion.com/register" class="btn btn-cta btn-large">Sign Up &rarr;</a>
+                    <p class="cta-pricing-hint">Starting at $100/month &middot; Cancel anytime</p>
                 </div>
             </div>
         </section>
@@ -296,6 +288,8 @@
         </div>
     </footer>
 
+    <a href="https://portal.voicecompanion.com/register" class="mobile-sticky-cta" aria-label="Sign Up">Sign Up</a>
+
     <div id="contact-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <div class="modal-content">
             <button class="close-modal" aria-label="Close">&times;</button>
@@ -326,21 +320,7 @@
 
     <script>
         const header = document.querySelector('.main-header');
-        const menuToggle = document.querySelector('.menu-toggle');
-        const navLinks = document.querySelector('.nav-links');
         let lastScrollY = window.scrollY;
-
-        menuToggle.addEventListener('click', () => {
-            menuToggle.classList.toggle('active');
-            navLinks.classList.toggle('active');
-        });
-
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                menuToggle.classList.remove('active');
-                navLinks.classList.remove('active');
-            });
-        });
 
         // Graceful fallback if audio files are missing
         document.querySelectorAll('.custom-audio source').forEach(source => {
@@ -357,11 +337,7 @@
 
         window.addEventListener('scroll', () => {
             const currentScrollY = window.scrollY;
-            if (currentScrollY > lastScrollY && !navLinks.classList.contains('active')) {
-                header.classList.add('hidden');
-            } else {
-                header.classList.remove('hidden');
-            }
+            header.classList.toggle('hidden', currentScrollY > lastScrollY && currentScrollY > 80);
             lastScrollY = currentScrollY;
         });
 
@@ -379,8 +355,7 @@
         }, { threshold: 0.12 });
 
         animateEls.forEach(el => {
-            const isHero = el.closest('.hero-section');
-            if (isHero) {
+            if (el.closest('.hero-section')) {
                 const delay = parseInt(el.dataset.delay || 0);
                 setTimeout(() => el.classList.add('in-view'), delay + 80);
             } else {
@@ -403,19 +378,11 @@
         }
 
         document.querySelectorAll('.contact-trigger').forEach(el => {
-            el.addEventListener('click', e => {
-                e.preventDefault();
-                closeMenu();
-                openModal();
-            });
+            el.addEventListener('click', e => { e.preventDefault(); openModal(); });
         });
 
         closeBtn.addEventListener('click', closeModal);
-
-        modal.addEventListener('click', e => {
-            if (e.target === modal) closeModal();
-        });
-
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
         document.addEventListener('keydown', e => {
             if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
         });
@@ -427,11 +394,6 @@
             btn.disabled = true;
             setTimeout(closeModal, 1800);
         });
-
-        function closeMenu() {
-            menuToggle.classList.remove('active');
-            navLinks.classList.remove('active');
-        }
     </script>
 
 </body>
