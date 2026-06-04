@@ -397,12 +397,37 @@
             if (e.key === 'Escape' && modal.classList.contains('active')) closeModal();
         });
 
-        document.getElementById('contact-form').addEventListener('submit', e => {
+        document.getElementById('contact-form').addEventListener('submit', async e => {
             e.preventDefault();
-            const btn = e.target.querySelector('[type="submit"]');
-            btn.textContent = 'Message sent!';
+            const form = e.target;
+            const btn = form.querySelector('[type="submit"]');
             btn.disabled = true;
-            setTimeout(closeModal, 1800);
+            btn.textContent = 'Sending…';
+
+            const payload = {
+                name: form.querySelector('#contact-name').value,
+                email: form.querySelector('#contact-email').value,
+                message: form.querySelector('#contact-message').value,
+            };
+
+            try {
+                const res = await fetch('https://api.voicecompanion.com/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                if (!res.ok) throw new Error('Server error');
+                btn.textContent = 'Message sent!';
+                setTimeout(closeModal, 1800);
+            } catch (err) {
+                btn.disabled = false;
+                btn.textContent = 'Send Message';
+                const errMsg = form.querySelector('.form-error-msg') || document.createElement('p');
+                errMsg.className = 'form-error-msg';
+                errMsg.style.cssText = 'color:#c0392b;font-size:0.9em;margin-top:0.5rem;';
+                errMsg.textContent = 'Something went wrong — please email us at info@voicecompanion.com';
+                if (!form.querySelector('.form-error-msg')) form.appendChild(errMsg);
+            }
         });
     </script>
 
