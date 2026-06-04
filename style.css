@@ -1166,9 +1166,21 @@ h2 {
         letter-spacing: 0.01em;
     }
 
-    /* Hide desktop auth buttons; sticky CTA handles sign-up */
-    .nav-cta {
+    /* Hide Sign Up from nav — sticky pill handles it.
+       Keep Client Login visible as a compact link for returning users. */
+    .nav-cta .btn-primary {
         display: none;
+    }
+
+    .nav-cta {
+        order: 2;
+    }
+
+    .nav-cta .btn-secondary {
+        font-size: 0.75rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 20px;
+        white-space: nowrap;
     }
 
     /* Sticky mobile Sign Up pill */
