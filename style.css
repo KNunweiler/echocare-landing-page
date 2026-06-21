@@ -876,6 +876,23 @@ h2 {
     text-align: center;
 }
 
+.grant-badge {
+    display: inline-block;
+    margin-bottom: 1.25rem;
+    opacity: 0.85;
+    transition: opacity 0.2s ease;
+}
+
+.grant-badge:hover {
+    opacity: 1;
+}
+
+.grant-badge img {
+    display: block;
+    width: 200px;
+    height: auto;
+}
+
 .footer-bottom p {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.28);
