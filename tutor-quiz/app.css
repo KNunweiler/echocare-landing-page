@@ -160,6 +160,12 @@ body {
 }
 .heard { color: var(--chalk); font-style: italic; max-width: 220px; overflow: hidden; white-space: nowrap; }
 .mic-off { color: var(--bad); }
+.openanswer { margin-top: 22px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.open-hint { color: var(--dim); font-size: 0.85rem; font-style: italic; }
+.fb-answer {
+  font-size: 1.5rem; font-weight: 800; color: var(--chalk);
+  margin: 6px 0 2px; animation: pop 0.25s ease-out;
+}
 @keyframes pulse { 0%,100% { opacity: 0.35; transform: scale(0.85); } 50% { opacity: 1; transform: scale(1.15); } }
 
 .opts {

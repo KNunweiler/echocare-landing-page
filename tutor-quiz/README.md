@@ -23,13 +23,16 @@ self-contained static app — no build step, no dependencies. Just open
 Toggle it on the home screen, start a round, and put the phone/laptop in the
 middle of the table:
 
-- Every question is **read aloud** (speech synthesis).
+- **No multiple choice** — voice rounds are open-answer. The question is
+  **read aloud** (speech synthesis) and nothing but the mic bar is on screen.
 - The mic **listens for yelled answers** (speech recognition) — full answers,
-  partial names ("Napoleon!"), years ("1809!"), aliases ("America!", "DC!"),
-  and math answers all count.
-- Wrong yells count as wrong, so no shouting all four options.
+  partial names ("Napoleon!"), aliases ("America!", "DC!", "Burma!"), years,
+  and math answers all count. Wrong guesses are ignored, so the whole family
+  can keep yelling until someone nails it or the clock runs out.
+- Year questions get a closeness tolerance by difficulty: ±10 on Easy,
+  ±5 Medium, ±2 Hard, exact on 💀 Impossible.
 - Needs Chrome or Edge with mic permission; everywhere else the app quietly
-  falls back to tap-to-answer.
+  falls back to tap-to-answer multiple choice.
 
 ## Scoring
 

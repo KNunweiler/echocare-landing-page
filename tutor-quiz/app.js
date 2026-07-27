@@ -534,38 +534,36 @@ function optionMatchers(optRaw){
 const hasPhrase = (transcript, phrase) =>
   new RegExp(`\\b${phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`).test(transcript);
 
-/* Match a final transcript against the current question.
-   Returns {mc:index} or {input:number} or null. */
-function matchTranscript(q, rawTranscript){
+/* Voice mode is open-answer — no multiple choice. A yell only counts
+   when it matches the CORRECT answer; anything else is ignored and the
+   mic keeps listening until the clock runs out. */
+const YEAR_TOLERANCE = {1:10, 2:5, 3:2, 4:0};
+const STOP_WORDS = new Set(["the","and","of","city","new","saint","lake","mount","sea",
+  "ocean","river","great","north","south","east","west","island","islands","republic","desert","falls"]);
+
+function matchOpen(q, rawTranscript){
   const t = normText(rawTranscript);
-  if (!t) return null;
+  if (!t) return false;
   const nums = (rawTranscript.match(/\d+/g) || []).map(Number);
 
-  if (q.kind === "input"){
-    if (nums.length) return { input: nums[nums.length - 1] };
-    return null;
-  }
+  if (q.kind === "input") return nums.includes(q.answer);
 
-  // 1) full phrase or alias match
-  for (let i = 0; i < q.options.length; i++){
-    for (const m of optionMatchers(q.options[i])){
-      if (hasPhrase(t, m)) return { mc: i };
-    }
+  const correctRaw = String(q.options[q.answer]);
+  // year questions: numeric, with a closeness tolerance by difficulty
+  if (q.key.startsWith("year:")){
+    const target = Math.abs(parseInt(correctRaw, 10));
+    const tol = YEAR_TOLERANCE[S.diff] || 0;
+    return nums.some(n => Math.abs(n - target) <= tol);
   }
-  // 2) numeric options (years): match yelled number
-  for (let i = 0; i < q.options.length; i++){
-    const optNums = (String(q.options[i]).match(/\d+/g) || []).map(Number);
-    if (optNums.length && nums.some(n => optNums.includes(n))) return { mc: i };
+  // full phrase or alias ("america", "dc", "burma"…)
+  for (const m of optionMatchers(correctRaw)){
+    if (hasPhrase(t, m)) return true;
   }
-  // 3) distinctive-word match: "Napoleon" → "Napoleon Bonaparte"
-  const tokenSets = q.options.map(o => new Set(normText(o).split(" ").filter(w => w.length >= 3)));
-  for (let i = 0; i < q.options.length; i++){
-    for (const tok of tokenSets[i]){
-      const elsewhere = tokenSets.some((set, j) => j !== i && set.has(tok));
-      if (!elsewhere && hasPhrase(t, tok)) return { mc: i };
-    }
+  // partial credit: any meaningful word of the answer ("napoleon", "bonaparte")
+  for (const tok of normText(correctRaw).split(" ")){
+    if (tok.length >= 4 && !STOP_WORDS.has(tok) && hasPhrase(t, tok)) return true;
   }
-  return null;
+  return false;
 }
 
 function startListening(){
@@ -589,17 +587,22 @@ function startListening(){
     if (heard) heard.textContent = (finals + " " + interim).trim().slice(-60) || "…";
     if (!finals.trim()) return;
     const q = S.qs[S.idx];
-    const m = matchTranscript(q, finals);
-    if (!m) return;
+    if (!matchOpen(q, finals)) return; // keep listening — only the right answer scores
     stopListening();
-    if (m.mc !== undefined) answerMC(m.mc);
-    else answerInput(m.input);
+    if (!S.locked){
+      S.locked = true;
+      clearInterval(S.timerId);
+      settle(true, q);
+    }
   };
   rec.onerror = (e) => {
     if (e.error === "not-allowed" || e.error === "service-not-allowed"){
       VOICE.micError = true;
-      const mic = $("#micstate");
-      if (mic) mic.innerHTML = `🎤 <span class="mic-off">mic blocked — tap answers instead</span>`;
+      // mic died — drop this run to tap mode so the game keeps moving
+      if (S.voice){
+        S.voice = false;
+        if (!S.locked && S.qs.length) showQuestion();
+      }
     }
   };
   rec.onend = () => {
@@ -658,7 +661,7 @@ function showHome(){
         <input type="checkbox" id="voicetoggle" ${VOICE.enabled ? "checked" : ""}>
         <span class="voice-emoji">🎤</span>
         <span><strong>Family Voice Mode</strong><br>
-        <small>Questions are read out loud — everybody just yells the answer!</small></span>
+        <small>No multiple choice — questions are read out loud and everybody yells the answer!</small></span>
       </label>`
     : `<div class="voicebar dim">🎤 Family Voice Mode needs Chrome or Edge with a microphone — playing in tap mode here.</div>`;
 
@@ -705,7 +708,7 @@ function openSheet(catId){
     </button>`;
   }).join("");
   const voiceNote = VOICE.enabled && VOICE.supported
-    ? `<div class="sheet-voice">🎤 Voice is ON — questions will be read aloud. Yell your answers!</div>` : "";
+    ? `<div class="sheet-voice">🎤 Voice is ON — no multiple choice, questions are read aloud. Yell your answers!</div>` : "";
   const ov = document.createElement("div");
   ov.className = "overlay";
   ov.innerHTML = `
@@ -742,10 +745,16 @@ function showQuestion(){
   const q = S.qs[S.idx];
   S.locked = false;
   const diff = DIFFS.find(d => d.id === S.diff);
-  S.timeMax = diff.time + (S.voice ? 5 : 0); // extra time to yell + recognize
+  S.timeMax = diff.time + (S.voice ? 8 : 0); // open answers need time to yell + recognize
   S.timeLeft = S.timeMax;
 
-  const optionsHtml = q.kind === "mc"
+  // Voice mode is open-answer: no choices on screen, just yell it out.
+  const optionsHtml = S.voice
+    ? `<div class="openanswer">
+        <div class="microw" id="micstate">🎤 <span class="mic-dot"></span> listening… <span id="heard" class="heard"></span></div>
+        <div class="open-hint">No choices — yell the answer!</div>
+      </div>`
+    : q.kind === "mc"
     ? `<div class="opts">${q.options.map((o, i) =>
         `<button class="opt ${q.optClass || ""}" data-i="${i}"><span class="opt-key">${i + 1}</span>${esc(o)}</button>`
       ).join("")}</div>`
@@ -753,10 +762,6 @@ function showQuestion(){
         <input id="mathin" type="text" inputmode="numeric" pattern="-?[0-9]*" placeholder="?" autofocus>
         <button type="submit" class="btn go">Lock it in ✅</button>
       </form>`;
-
-  const micHtml = S.voice
-    ? `<div class="microw" id="micstate">🎤 <span class="mic-dot"></span> listening… <span id="heard" class="heard"></span></div>`
-    : "";
 
   $("#screen").innerHTML = `
     <section class="quiz">
@@ -770,21 +775,22 @@ function showQuestion(){
         <div class="qbig ${q.bigClass || ""}">${esc(q.big)}</div>
         <div class="qprompt">${esc(q.prompt)}</div>
         ${q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : ""}
-        ${micHtml}
         ${optionsHtml}
         <div class="feedback" id="feedback"></div>
       </div>
     </section>`;
 
-  if (q.kind === "mc"){
-    document.querySelectorAll(".opt").forEach(b =>
-      b.addEventListener("click", () => answerMC(parseInt(b.dataset.i, 10))));
-  } else {
-    $("#mathform").addEventListener("submit", (e) => {
-      e.preventDefault();
-      answerInput($("#mathin").value);
-    });
-    if (!S.voice) $("#mathin").focus();
+  if (!S.voice){
+    if (q.kind === "mc"){
+      document.querySelectorAll(".opt").forEach(b =>
+        b.addEventListener("click", () => answerMC(parseInt(b.dataset.i, 10))));
+    } else {
+      $("#mathform").addEventListener("submit", (e) => {
+        e.preventDefault();
+        answerInput($("#mathin").value);
+      });
+      $("#mathin").focus();
+    }
   }
 
   if (S.voice){
@@ -877,6 +883,8 @@ function answerText(q){
 
 function settle(right, q, timedOut){
   const fb = $("#feedback");
+  // in open-answer voice mode, reveal the answer big on screen
+  const reveal = S.voice ? `<div class="fb-answer">${esc(answerText(q))}</div>` : "";
   if (right){
     const p = points();
     S.score += p;
@@ -884,12 +892,12 @@ function settle(right, q, timedOut){
     S.streak += 1;
     S.bestStreak = Math.max(S.bestStreak, S.streak);
     const yells = ["LET'S GO! 🎉","BIG BRAIN 🧠","SHEEEESH 🔥","EASY MONEY 💸","TOO SMART 😤","CERTIFIED ✅"];
-    fb.innerHTML = `<div class="fb ok">${rand(yells)} +${p}</div><div class="fb-fact">${esc(q.fact)}</div>`;
+    fb.innerHTML = `<div class="fb ok">${rand(yells)} +${p}</div>${reveal}<div class="fb-fact">${esc(q.fact)}</div>`;
     if (S.voice) speak(S.streak >= 3 ? `Correct! ${S.streak} in a row!` : "Correct!");
   } else {
     S.streak = 0;
     const heading = timedOut ? "TIME'S UP ⏰" : "NOT QUITE 😬";
-    fb.innerHTML = `<div class="fb no">${heading}</div><div class="fb-fact">${esc(q.fact)}</div>`;
+    fb.innerHTML = `<div class="fb no">${heading}</div>${reveal}<div class="fb-fact">${esc(q.fact)}</div>`;
     if (S.voice) speak(`${timedOut ? "Time's up!" : "Nope!"} The answer was ${answerText(q)}.`);
   }
   const delay = S.voice ? (right ? 2000 : 3200) : (right ? 1300 : 2100);
