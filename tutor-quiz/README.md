@@ -12,7 +12,7 @@ self-contained static app — no build step, no dependencies. Just open
 | 🚩 Flags | Name the country from its flag (144 countries, tiered by obscurity; harder tiers flip it — pick the flag) |
 | 🏙️ World Capitals | Capitals both directions, with classic trap answers (Sydney, Istanbul, Rio…) |
 | 🗽 US State Capitals | All 50 states, with trap cities (Chicago, Seattle, NYC…) |
-| 🏛️ Historical People | "Who am I?" from a one-line clue — 75 figures from Confucius to Kobe |
+| 🏛️ Historical People | "Who is this?" — portrait + one-line clue, 75 figures from Confucius to Kobe |
 | 📅 Birth & Death Years | The classic: what year were they born, what year did they die (Impossible = within ±1–4 years) |
 | ➗ Quick Maths | Mental arithmetic, from times tables to 17² and order-of-operations traps |
 | 🌍 Geography Trivia | Rivers, deserts, old country names, and gotchas (largest desert = Antarctica) |
@@ -41,3 +41,12 @@ middle of the table:
 `localStorage`. Finish 10/10 for the S-grade confetti.
 
 Keyboard: press **1–4** to answer, **Enter** to submit math answers.
+
+## Portraits
+
+Historical People and Birth & Death Years questions show a portrait
+(photo or painting) of the figure, loaded live from the Wikipedia REST
+summary API (freely licensed lead images, credited on screen). Images are
+prefetched for the whole round when it starts and fall back to a 🏛️ emoji
+if the network or a particular image is unavailable — the game never blocks
+on them.
