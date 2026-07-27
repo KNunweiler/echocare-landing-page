@@ -349,11 +349,11 @@ function buildPeople(diff){
   const f = rand(pool);
   const others = pickDistinct(pool, 3, x => x[0] === f[0]);
   const opts = shuffle([f, ...others]);
-  return { kind:"mc", key:"person:"+f[0], big:"🏛️", bigClass:"",
-    prompt:"Who am I?", sub:`“${f[3]}”`,
+  return { kind:"mc", key:"person:"+f[0], big:"🏛️", bigClass:"", figure:f[0],
+    prompt:"Who is this?", sub:`“${f[3]}”`,
     options:opts.map(x => x[0]), answer:opts.indexOf(f),
     fact:`${f[0]} (${fmtYear(f[1])} – ${fmtYear(f[2])}) — ${f[3]}`,
-    speak:`Who am I? ${f[3]}.` };
+    speak:`Who is this? ${f[3]}.` };
 }
 
 function buildYears(diff){
@@ -371,9 +371,10 @@ function buildYears(diff){
     options.push(cand);
   }
   const opts = shuffle(options);
-  return { kind:"mc", key:"year:"+f[0]+(born?"b":"d"), big:"📅", bigClass:"",
-    prompt: born ? `In what year was ${f[0]} born?` : `In what year did ${f[0]} die?`,
-    sub:`“${f[3]}”`,
+  const prompt = born ? `In what year was ${f[0]} born?` : `In what year did ${f[0]} die?`;
+  // speak only the prompt — clues can contain years the mic would hear itself say
+  return { kind:"mc", key:"year:"+f[0]+(born?"b":"d"), big:"📅", bigClass:"", figure:f[0],
+    prompt, sub:`“${f[3]}”`, speak:prompt,
     options:opts.map(fmtYear), answer:opts.indexOf(y),
     fact:`${f[0]}: born ${fmtYear(f[1])}, died ${fmtYear(f[2])}.` };
 }
@@ -381,6 +382,10 @@ function buildYears(diff){
 function buildMath(diff){
   let expr, ans;
   const r = (lo, hi) => lo + ri(hi - lo + 1);
+  // regenerate if the answer appears in the expression itself (e.g. 24 − 12 = 12):
+  // in voice mode the mic can hear the question being read aloud
+  let guard = 0;
+  do {
   if (diff === 1){
     const kind = ri(3);
     if (kind === 0){ const a = r(6,49), b = r(6,49); expr = `${a} + ${b}`; ans = a + b; }
@@ -406,6 +411,7 @@ function buildMath(diff){
     else if (kind === 1){ const a = r(13,19); expr = `${a}²`; ans = a * a; }
     else { const a = r(4,15), b = r(3,9), c = r(3,9); expr = `${a} + ${b} × ${c}`; ans = a + b * c; }
   }
+  } while (guard++ < 20 && (expr.match(/\d+/g) || []).map(Number).includes(ans));
   const spoken = expr.replace(/−/g, " minus ").replace(/×/g, " times ")
     .replace(/²/g, " squared").replace(/%/g, " percent");
   return { kind:"input", key:"math:"+expr, big:expr, bigClass:"big-math",
@@ -443,6 +449,44 @@ function buildRun(catId, diff){
 }
 
 /* ---------------- Persistence ---------------- */
+/* ---------------- Portraits from Wikipedia (free images) ----------------
+   Fetches each figure's lead image via the Wikipedia REST summary API.
+   Falls back to the 🏛️ emoji when offline or no image exists.        */
+const IMG_CACHE = {};
+function figureImage(name, cb){
+  if (name in IMG_CACHE){ cb(IMG_CACHE[name]); return; }
+  const title = encodeURIComponent(name.replace(/ /g, "_"));
+  fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${title}`)
+    .then(r => r.ok ? r.json() : null)
+    .then(j => {
+      let url = (j && j.thumbnail && j.thumbnail.source) || null;
+      if (url) url = url.replace(/\/(\d+)px-/, "/480px-");
+      IMG_CACHE[name] = url;
+      cb(url);
+    })
+    .catch(() => { IMG_CACHE[name] = null; cb(null); });
+}
+function loadPortrait(q){
+  if (!q.figure) return;
+  figureImage(q.figure, (url) => {
+    const el = $("#portrait");
+    if (!el || S.qs[S.idx] !== q || !url) return;
+    const img = new Image();
+    img.alt = "";
+    img.onload = () => {
+      if ($("#portrait") && S.qs[S.idx] === q){
+        el.innerHTML = "";
+        el.appendChild(img);
+        const credit = document.createElement("span");
+        credit.className = "imgcredit";
+        credit.textContent = "📷 Wikipedia";
+        el.appendChild(credit);
+      }
+    };
+    img.src = url;
+  });
+}
+
 const bestKey = (cat, diff) => `quizu-best-${cat}-${diff}`;
 function getBest(cat, diff){
   try { return JSON.parse(localStorage.getItem(bestKey(cat, diff))) || null; }
@@ -738,6 +782,8 @@ function startRun(catId, diff){
   S.voice = VOICE.enabled && VOICE.supported && !VOICE.micError;
   S.qs = buildRun(catId, diff);
   S.idx = 0; S.score = 0; S.correct = 0; S.streak = 0; S.bestStreak = 0;
+  // warm the portrait cache for the whole round
+  S.qs.forEach(q => { if (q.figure) figureImage(q.figure, () => {}); });
   showQuestion();
 }
 
@@ -745,7 +791,7 @@ function showQuestion(){
   const q = S.qs[S.idx];
   S.locked = false;
   const diff = DIFFS.find(d => d.id === S.diff);
-  S.timeMax = diff.time + (S.voice ? 8 : 0); // open answers need time to yell + recognize
+  S.timeMax = diff.time + (S.voice ? 12 : 0); // clock runs while the narrator reads; leave room to yell
   S.timeLeft = S.timeMax;
 
   // Voice mode is open-answer: no choices on screen, just yell it out.
@@ -772,7 +818,9 @@ function showQuestion(){
       </div>
       <div class="timer"><div class="timer-fill" id="tfill"></div></div>
       <div class="qcard">
-        <div class="qbig ${q.bigClass || ""}">${esc(q.big)}</div>
+        ${q.figure
+          ? `<div class="qportrait" id="portrait">🏛️</div>`
+          : `<div class="qbig ${q.bigClass || ""}">${esc(q.big)}</div>`}
         <div class="qprompt">${esc(q.prompt)}</div>
         ${q.sub ? `<div class="qsub">${esc(q.sub)}</div>` : ""}
         ${optionsHtml}
@@ -793,14 +841,13 @@ function showQuestion(){
     }
   }
 
+  loadPortrait(q);
+
   if (S.voice){
-    // read the question aloud, then start the clock and the mic
-    const say = q.speak || (q.prompt + (q.sub ? ". " + q.sub.replace(/[“”]/g, "") : ""));
-    speak(say, () => {
-      if (S.qs[S.idx] !== q || S.locked) return;
-      startTimer();
-      startListening();
-    });
+    // mic and clock start instantly — yell over the narrator if you know it!
+    startTimer();
+    startListening();
+    speak(q.speak || (q.prompt + (q.sub ? ". " + q.sub.replace(/[“”]/g, "") : "")));
   } else {
     startTimer();
   }

@@ -142,6 +142,17 @@ body {
   padding: 26px 20px; text-align: center;
 }
 .qbig { font-size: 3rem; line-height: 1.15; margin-bottom: 10px; }
+.qportrait {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  font-size: 3rem; line-height: 1.15; margin-bottom: 10px; min-height: 90px;
+  justify-content: center;
+}
+.qportrait img {
+  max-height: 230px; max-width: 82%; border-radius: 14px;
+  border: 2px solid var(--line); box-shadow: 0 8px 26px rgba(0,0,0,0.45);
+  animation: pop 0.25s ease-out;
+}
+.imgcredit { font-size: 0.65rem; color: var(--dim); }
 .qbig.big-flag { font-size: 6rem; filter: drop-shadow(0 6px 18px rgba(0,0,0,0.45)); }
 .qbig.big-math { font-size: 3.2rem; font-weight: 800; letter-spacing: 2px; color: var(--chalk); }
 .qprompt { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
